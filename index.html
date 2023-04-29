@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: black;
+            margin: 0rem;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+        }
+
+        #image-track {
+            display: flex;
+            gap: 4vmin;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(0%, -50%);
+            user-select: none;
+        }
+
+        #image-track .image {
+            width: 40vmin;
+            height: 56vmin;
+            object-fit: cover;
+            object-position: 100% center;
+        }
+        .header {
+            font-size: 40px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">😚 This is my afternoon 😚</div>
+    <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0">
+        <img class="image" draggable="false" src="./images/1.jpg" />
+        <img class="image" draggable="false" src="./images/2.jpg" />
+        <img class="image" draggable="false" src="./images/3.jpg" />
+        <img class="image" draggable="false" src="./images/4.jpg" />
+        <img class="image" draggable="false" src="./images/5.jpg" />
+        <img class="image" draggable="false" src="./images/6.jpg" />
+        <img class="image" draggable="false" src="./images/7.jpg" />
+        <img class="image" draggable="false" src="./images/8.jpg" />
+        <img class="image" draggable="false" src="./images/9.jpg" />
+        <img class="image" draggable="false" src="./images/10.jpg" />
+        <img class="image" draggable="false" src="./images/11.jpg" />
+        <img class="image" draggable="false" src="./images/12.jpg" />
+        <img class="image" draggable="false" src="./images/13.jpg" />
+        <img class="image" draggable="false" src="./images/14.jpg" />
+        <img class="image" draggable="false" src="./images/15.jpg" />
+        <img class="image" draggable="false" src="./images/16.jpg" />
+        <img class="image" draggable="false" src="./images/17.jpg" />
+        <img class="image" draggable="false" src="./images/18.jpg" />
+        <img class="image" draggable="false" src="./images/19.jpg" />
+        <img class="image" draggable="false" src="./images/20.jpg" />
+        <img class="image" draggable="false" src="./images/21.jpg" />
+    </div>
+    <script>
+        const track = document.getElementById("image-track");
+
+        const handleOnDown = e => track.dataset.mouseDownAt = e.clientX;
+
+        const handleOnUp = () => {
+            track.dataset.mouseDownAt = "0";
+            track.dataset.prevPercentage = track.dataset.percentage;
+        }
+
+        const handleOnMove = e => {
+            if (track.dataset.mouseDownAt === "0") return;
+
+            const mouseDelta = parseFloat(track.dataset.mouseDownAt) - e.clientX,
+                maxDelta = window.innerWidth / 2;
+
+            const percentage = (mouseDelta / maxDelta) * -100,
+                nextPercentageUnconstrained = parseFloat(track.dataset.prevPercentage) + percentage,
+                nextPercentage = Math.max(Math.min(nextPercentageUnconstrained, 0), -100);
+
+            track.dataset.percentage = nextPercentage;
+
+            track.animate({
+                transform: `translate(${nextPercentage}%, -50%)`
+            }, { duration: 1200, fill: "forwards" });
+
+            for (const image of track.getElementsByClassName("image")) {
+                image.animate({
+                    objectPosition: `${100 + nextPercentage}% center`
+                }, { duration: 1200, fill: "forwards" });
+            }
+        }
+
+        window.onmousedown = e => handleOnDown(e);
+
+        window.ontouchstart = e => handleOnDown(e.touches[0]);
+
+        window.onmouseup = e => handleOnUp(e);
+
+        window.ontouchend = e => handleOnUp(e.touches[0]);
+
+        window.onmousemove = e => handleOnMove(e);
+
+        window.ontouchmove = e => handleOnMove(e.touches[0]);
+    </script>
+</body>
+
+</html>
